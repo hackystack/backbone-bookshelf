@@ -1,15 +1,3 @@
-<html>
-  <head>
-    <title>Shelf of Books</title>
-  </head>
-  <body>
-    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min.js"></script>
-    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min.js"></script>
-    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/js/bootstrap.min.js"></script>
-  </body>
-</html>
-
 var bookData = {
 			 
 			  "books": [
@@ -59,10 +47,39 @@ var Book = Backbone.Model.extend({
 		price: 0.00, 
 		title: '', 
 		author: ''
-	});
+    }
+});
 
 
 var Books = Backbone.Collection.extend({model: Book});
 
-var ShelfView = Backbone.View.extend({collection: Books});
 
+var bookShelf = new Books(bookData.books);
+
+var ShelfView = Backbone.View.extend({
+  tagName: 'ul',
+  template: _.template("<p><%= title%><%= author %><%= year %><%= price %><%= category %></p>"),
+  
+  initialize: function(){
+  	this.render();
+  },
+
+  render: function(){
+  	var context = this;
+  	context.$el.html("");
+  	context.collection.each(function(book){
+      context.$el.append(context.template(book.attributes)); 
+  	}, context);
+    $('body').append(context.$el);
+  },
+  
+  events:{
+  	'click': function(){
+  		this.render();
+  	}
+  }
+
+});
+
+
+var shelf = new ShelfView({collection: bookShelf});
